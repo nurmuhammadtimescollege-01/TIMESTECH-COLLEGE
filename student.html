@@ -935,7 +935,10 @@ assignmentItems.forEach(
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
+    import {
+        getMessaging,
+        getToken
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDbmmHXlulqgUxqzbn7iGeywHMdEraDO2Y",
@@ -964,19 +967,21 @@ assignmentItems.forEach(
                 return;
             }
 
-             const registration = await navigator.serviceWorker.register(
-    "/TIMESTECH-COLLEGE/firebase-messaging-sw.js",
-    {
-        scope: "/TIMESTECH-COLLEGE/"
-    }
-);
+            const registration =
+                await navigator.serviceWorker.register(
+                    "/TIMESTECH-COLLEGE/firebase-messaging-sw.js",
+                    {
+                        scope: "/TIMESTECH-COLLEGE/"
+                    }
+                );
 
-await navigator.serviceWorker.ready;
+            await navigator.serviceWorker.ready;
 
-const token = await getToken(messaging, {
-    vapidKey: "BBwanVSXM6DSK2bHxoJZpURL-NNIX1LS4oB4cjZZUJyUR79S1EioMch_V8e0-PAhBrUYPXURF4j3Vtr6sduM6g",
-    serviceWorkerRegistration: registration
-});
+            const token =
+                await getToken(messaging, {
+                    vapidKey: "BBwanVSXM6DSk2bHxoJZpURL-NNIXlLS4oB4cjZZUJyUR79Sl1EioMch_V8e0-PAhBrUYPXURF4j3Vtr6sduM6g",
+                    serviceWorkerRegistration: registration
+                });
 
             if (token) {
 
@@ -993,7 +998,9 @@ const token = await getToken(messaging, {
 
             } else {
 
-                alert("Token notification tidak berjaya diperoleh.");
+                alert(
+                    "Token notification tidak berjaya diperoleh."
+                );
 
             }
 
@@ -1003,7 +1010,7 @@ const token = await getToken(messaging, {
 
             alert(
                 "Notification gagal diaktifkan. " +
-                "Pastikan website dibuka melalui HTTPS."
+                "Semak Console untuk error."
             );
 
         }

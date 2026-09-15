@@ -965,8 +965,13 @@ assignmentItems.forEach(
             }
 
              const registration = await navigator.serviceWorker.register(
-    "/TIMESTECH-COLLEGE/firebase-messaging-sw.js"
+    "/TIMESTECH-COLLEGE/firebase-messaging-sw.js",
+    {
+        scope: "/TIMESTECH-COLLEGE/"
+    }
 );
+
+await navigator.serviceWorker.ready;
 
 const token = await getToken(messaging, {
     vapidKey: "BBwanVSXM6DSK2bHxoJZpURL-NNIX1LS4oB4cjZZUJyUR79S1EioMch_V8e0-PAhBrUYPXURF4j3Vtr6sduM6g",

@@ -1014,7 +1014,7 @@ assignmentItems.forEach(
     }
 
     // Terima notification ketika website sedang dibuka
-    onMessage(messaging, (payload) => {
+            onMessage(messaging, (payload) => {
 
         console.log(
             "NOTIFICATION RECEIVED:",
@@ -1029,27 +1029,23 @@ assignmentItems.forEach(
             payload.notification?.body ||
             "You have a new notification.";
 
-        if (Notification.permission === "granted") {
-    const notification = new Notification(title, {
+        navigator.serviceWorker.ready.then((registration) => {
+
+    registration.showNotification(title, {
+
         body: body,
+
         icon: "/TIMESTECH-COLLEGE/images/timescollege.png"
-    });
-
-    notification.onclick = () => {
-        window.focus();
-        notification.close();
-    };
-
-    console.log("✅ NOTIFICATION DISPLAY DIHANTAR");
-} else {
-    console.log("❌ Notification permission:", Notification.permission);
-}
 
     });
+
+    console.log("✅ NOTIFICATION DIHANTAR MELALUI SERVICE WORKER");
+
+});
 
     // Jalankan secara automatik
-    setupNotifications();
-
+    setupNotifications()
+});
 </script>
 
 </body>

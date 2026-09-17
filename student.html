@@ -1029,10 +1029,21 @@ assignmentItems.forEach(
             payload.notification?.body ||
             "You have a new notification.";
 
-        new Notification(title, {
-            body: body,
-            icon: "/TIMESTECH-COLLEGE/images/timescollege.png"
-        });
+        if (Notification.permission === "granted") {
+    const notification = new Notification(title, {
+        body: body,
+        icon: "/TIMESTECH-COLLEGE/images/timescollege.png"
+    });
+
+    notification.onclick = () => {
+        window.focus();
+        notification.close();
+    };
+
+    console.log("✅ NOTIFICATION DISPLAY DIHANTAR");
+} else {
+    console.log("❌ Notification permission:", Notification.permission);
+}
 
     });
 

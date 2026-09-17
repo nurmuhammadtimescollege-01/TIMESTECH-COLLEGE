@@ -960,6 +960,8 @@ assignmentItems.forEach(
 
     const db = getFirestore(app);
 
+    console.log("FIRESTORE TEST");
+
     async function loadAssignments() {
     try {
         const querySnapshot = await getDocs(

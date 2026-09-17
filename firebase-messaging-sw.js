@@ -16,3 +16,27 @@ firebase.initializeApp({
 });
 
 const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+    console.log(
+        "[firebase-messaging-sw.js] Background message:",
+        payload
+    );
+
+    const title =
+        payload.notification?.title ||
+        "TimesTech College";
+
+    const options = {
+        body:
+            payload.notification?.body ||
+            "You have a new notification.",
+        icon:
+            "/TIMESTECH-COLLEGE/images/timescollege.png"
+    };
+
+    self.registration.showNotification(
+        title,
+        options
+    );
+});

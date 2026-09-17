@@ -939,6 +939,12 @@ assignmentItems.forEach(
         onMessage
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
 
+    import {
+    getFirestore,
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
     const firebaseConfig = {
         apiKey: "AIzaSyDbmmHXlulqgUxqzbn7iGeywHMdEraDO2Y",
         authDomain: "student-area-2dd83.firebaseapp.com",
@@ -949,7 +955,33 @@ assignmentItems.forEach(
     };
 
     const app = initializeApp(firebaseConfig);
+
     const messaging = getMessaging(app);
+
+    const db = getFirestore(app);
+
+    async function loadAssignments() {
+    try {
+        const querySnapshot = await getDocs(
+            collection(db, "assignments")
+        );
+
+        querySnapshot.forEach((doc) => {
+            console.log(
+                "ASSIGNMENT:",
+                doc.id,
+                doc.data()
+            );
+        });
+    } catch (error) {
+        console.error(
+            "Firestore Error:",
+            error
+        );
+    }
+}
+
+loadAssignments();
 
     async function setupNotifications() {
 

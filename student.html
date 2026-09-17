@@ -935,10 +935,11 @@ assignmentItems.forEach(
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import {
-        getMessaging,
-        getToken
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
+   import {
+    getMessaging,
+    getToken,
+    onMessage
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDbmmHXlulqgUxqzbn7iGeywHMdEraDO2Y",
@@ -951,6 +952,23 @@ assignmentItems.forEach(
 
     const app = initializeApp(firebaseConfig);
     const messaging = getMessaging(app);
+
+    onMessage(messaging, (payload) => {
+    console.log("NOTIFICATION RECEIVED:", payload);
+
+    const title =
+        payload.notification?.title ||
+        "TimesTech College";
+
+    const body =
+        payload.notification?.body ||
+        "You have a new notification.";
+
+    new Notification(title, {
+        body: body,
+        icon: "/TIMESTECH-COLLEGE/images/timescollege.png"
+    });
+});
 
     const notificationBtn =
         document.getElementById("notificationBtn");

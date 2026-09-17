@@ -964,9 +964,13 @@ assignmentItems.forEach(
 
     async function loadAssignments() {
     try {
-        const querySnapshot = await getDocs(
-            collection(db, "assignments")
-        );
+        console.log("MULA BACA FIRESTORE");
+
+const querySnapshot = await getDocs(
+    collection(db, "assignments")
+);
+
+console.log("SELESAI BACA FIRESTORE");
 
         querySnapshot.forEach((doc) => {
             console.log(

@@ -549,9 +549,7 @@
                 Student ID: Loading...
             </div>
 
-            <button id="notificationBtn" class="notification-btn">
-                🔔 Enable Notifications
-            </button>
+           
 
         </section>
 
@@ -935,11 +933,11 @@ assignmentItems.forEach(
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-   import {
-    getMessaging,
-    getToken,
-    onMessage
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
+    import {
+        getMessaging,
+        getToken,
+        onMessage
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDbmmHXlulqgUxqzbn7iGeywHMdEraDO2Y",
@@ -953,38 +951,22 @@ assignmentItems.forEach(
     const app = initializeApp(firebaseConfig);
     const messaging = getMessaging(app);
 
-    onMessage(messaging, (payload) => {
-    console.log("NOTIFICATION RECEIVED:", payload);
-
-    const title =
-        payload.notification?.title ||
-        "TimesTech College";
-
-    const body =
-        payload.notification?.body ||
-        "You have a new notification.";
-
-    new Notification(title, {
-        body: body,
-        icon: "/TIMESTECH-COLLEGE/images/timescollege.png"
-    });
-});
-
-    const notificationBtn =
-        document.getElementById("notificationBtn");
-
-    notificationBtn.addEventListener("click", async () => {
+    async function setupNotifications() {
 
         try {
 
+            // Minta permission notification
             const permission =
                 await Notification.requestPermission();
 
             if (permission !== "granted") {
-                alert("Notification permission tidak dibenarkan.");
+                console.log(
+                    "Notification permission tidak dibenarkan."
+                );
                 return;
             }
 
+            // Daftar Service Worker
             const registration =
                 await navigator.serviceWorker.register(
                     "/TIMESTECH-COLLEGE/firebase-messaging-sw.js",
@@ -993,8 +975,10 @@ assignmentItems.forEach(
                     }
                 );
 
+            // Tunggu Service Worker aktif
             await navigator.serviceWorker.ready;
 
+            // Dapatkan FCM Token
             const token =
                 await getToken(messaging, {
                     vapidKey: "BBwanVSXM6DSk2bHxoJZpURL-NNIXlLS4oB4cjZZUJyUR79Sl1EioMch_V8e0-PAhBrUYPXURF4j3Vtr6sduM6g",
@@ -1003,37 +987,58 @@ assignmentItems.forEach(
 
             if (token) {
 
-                console.log("FCM TOKEN:");
+                console.log("FCM TOKEN BERJAYA:");
                 console.log(token);
 
-                notificationBtn.textContent =
-                    "✓ Notifications Enabled";
-
-                notificationBtn.style.background =
-                    "#15803d";
-
-                alert("Notification berjaya diaktifkan! 🔔");
+                console.log(
+                    "🔔 Notification telah diaktifkan."
+                );
 
             } else {
 
-                alert(
-                    "Token notification tidak berjaya diperoleh."
+                console.log(
+                    "FCM Token tidak berjaya diperoleh."
                 );
 
             }
 
         } catch (error) {
 
-            console.error("FCM Error:", error);
-
-            alert(
-                "Notification gagal diaktifkan. " +
-                "Semak Console untuk error."
+            console.error(
+                "Notification Setup Error:",
+                error
             );
 
         }
 
+    }
+
+    // Terima notification ketika website sedang dibuka
+    onMessage(messaging, (payload) => {
+
+        console.log(
+            "NOTIFICATION RECEIVED:",
+            payload
+        );
+
+        const title =
+            payload.notification?.title ||
+            "TimesTech College";
+
+        const body =
+            payload.notification?.body ||
+            "You have a new notification.";
+
+        new Notification(title, {
+            body: body,
+            icon: "/TIMESTECH-COLLEGE/images/timescollege.png"
+        });
+
     });
+
+    // Jalankan secara automatik
+    setupNotifications();
+
 </script>
 
 </body>

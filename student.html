@@ -660,72 +660,7 @@
     </h2>
 
     <div id="assignmentList">
-
-        <div class="assignment">
-
-            <div class="assignment-info">
-
-                <h3>
-                    Networking Assignment
-                </h3>
-
-                <p>
-                    Introduction to Networking
-                </p>
-
-            </div>
-
-            <span class="due">
-                Due: 20 September 2026
-            </span>
-
-        </div>
-
-
-        <div class="assignment">
-
-            <div class="assignment-info">
-
-                <h3>
-                    Web Development Project
-                </h3>
-
-                <p>
-                    HTML & CSS Development
-                </p>
-
-            </div>
-
-            <span class="due">
-                Due: 23 September 2026
-            </span>
-
-        </div>
-
-
-        <div class="assignment">
-
-            <div class="assignment-info">
-
-                <h3>
-                    Programming Exercise
-                </h3>
-
-                <p>
-                    Basic Programming Concepts
-                </p>
-
-            </div>
-
-            <span class="due">
-                Due: 26 September 2026
-            </span>
-
-        </div>
-
     </div>
-
-</div>
 
 
 
@@ -973,20 +908,38 @@ const querySnapshot = await getDocs(
 console.log("SELESAI BACA FIRESTORE");
 console.log("JUMLAH DOCUMENT:", querySnapshot.size);
 
-        querySnapshot.forEach((doc) => {
-            console.log(
-                "ASSIGNMENT:",
-                doc.id,
-                doc.data()
-            );
-        });
-    } catch (error) {
-        console.error(
-            "Firestore Error:",
-            error
-        );
+    
+const assignmentList = document.getElementById("assignmentList");
+
+assignmentList.innerHTML = "";
+
+querySnapshot.forEach((doc) => {
+    const assignment = doc.data();
+
+    const div = document.createElement("div");
+
+    div.className = "assignment";
+
+    div.innerHTML = `
+        <div class="assignment-info">
+            <h3>${assignment.title}</h3>
+            <p>${assignment.description}</p>
+        </div>
+
+        <span class="due">
+            Due: ${assignment.dueDate}
+        </span>
+    `;
+
+    assignmentList.appendChild(div);
+});
+} catch (error) {
+    console.error(
+        "Firestore Error:",
+        error
+    );
+ }
     }
-}
 
 loadAssignments();
 

@@ -916,6 +916,9 @@ assignmentList.innerHTML = "";
 querySnapshot.forEach((doc) => {
     const assignment = doc.data();
 
+    console.log("DATA ASSIGNMENT:", doc.id, assignment);
+    console.log("DUE DATE:", assignment.dueDate);
+
     const div = document.createElement("div");
 
     div.className = "assignment";

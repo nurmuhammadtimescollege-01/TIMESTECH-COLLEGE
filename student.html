@@ -1078,7 +1078,11 @@ if (studentId) {
 
     OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
-            appId: "e2411621-eb73-480b-96f6-a79bfbea0a69"
+            appId: "e2411621-eb73-480b-96f6-a79bfbea0a69",
+            serviceWorkerPath: "/TIMESTECH-COLLEGE/OneSignalSDKWorker.js",
+         serviceWorkerParam: {
+        scope: "/TIMESTECH-COLLEGE/"
+         }
         });
 
         console.log("✅ OneSignal berjaya dimulakan");

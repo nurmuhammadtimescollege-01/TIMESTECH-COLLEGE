@@ -1,0 +1,166 @@
+name: Assignment Notifications
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Firebase Admin
+        run: npm install firebase-admin
+
+      - name: Check assignments and send notifications
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
+        run: |
+          node <<'NODE'
+          const admin = require("firebase-admin");
+
+          const serviceAccount =
+            JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
+          admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+          });
+
+          const db = admin.firestore();
+
+          function malaysiaToday() {
+            return new Intl.DateTimeFormat("en-CA", {
+              timeZone: "Asia/Kuala_Lumpur",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit"
+            }).format(new Date());
+          }
+
+          function daysBetween(date1, date2) {
+            const a = new Date(`${date1}T00:00:00Z`);
+            const b = new Date(`${date2}T00:00:00Z`);
+            return Math.round((b - a) / 86400000);
+          }
+
+          async function sendOneSignal(title, message) {
+            const response = await fetch(
+              "https://api.onesignal.com/notifications",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization":
+                    `Key ${process.env.ONESIGNAL_API_KEY}`
+                },
+                body: JSON.stringify({
+                  app_id: "e2411621-eb73-480b-96f6-a79bfbea0a69",
+                  included_segments: ["Subscribed Users"],
+                  headings: {
+                    en: title
+                  },
+                  contents: {
+                    en: message
+                  },
+                  web_url:
+                    "https://nurmuhammadtimescollege-01.github.io/TIMESTECH-COLLEGE/student.html"
+                })
+              }
+            );
+
+            const result = await response.json();
+
+            if (!response.ok) {
+              throw new Error(JSON.stringify(result));
+            }
+
+            console.log("OneSignal sent:", result);
+            return result;
+          }
+
+          async function main() {
+            const today = malaysiaToday();
+
+            console.log("Malaysia date:", today);
+
+            const snapshot = await db
+              .collection("Assignments")
+              .where("active", "==", true)
+              .get();
+
+            for (const doc of snapshot.docs) {
+              const assignment = doc.data();
+
+              if (!assignment.dueDate) continue;
+
+              const reminderDays =
+                Number(assignment.reminderDays ?? 2);
+
+              const daysLeft =
+                daysBetween(today, assignment.dueDate);
+
+              console.log(
+                assignment.title,
+                "due:",
+                assignment.dueDate,
+                "days left:",
+                daysLeft
+              );
+
+              if (daysLeft !== reminderDays) {
+                continue;
+              }
+
+              const notificationId =
+                `${doc.id}_${today}`;
+
+              const sentRef = db
+                .collection("NotificationLogs")
+                .doc(notificationId);
+
+              const sentDoc = await sentRef.get();
+
+              if (sentDoc.exists) {
+                console.log(
+                  "Already sent:",
+                  notificationId
+                );
+                continue;
+              }
+
+              await sendOneSignal(
+                "TimesTech College",
+                `${assignment.title} is due in ${daysLeft} days.`
+              );
+
+              await sentRef.set({
+                assignmentId: doc.id,
+                title: assignment.title,
+                dueDate: assignment.dueDate,
+                sentDate: today,
+                sentAt:
+                  admin.firestore.FieldValue.serverTimestamp()
+              });
+
+              console.log(
+                "Notification recorded:",
+                notificationId
+              );
+            }
+          }
+
+          main().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE

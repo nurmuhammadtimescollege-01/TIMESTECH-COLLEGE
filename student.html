@@ -1066,6 +1066,23 @@ if (studentId) {
             });
     // Jalankan secara automatik
     setupNotifications();
+
+    
+</script>
+
+<!-- OneSignal Web Push -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+<script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+
+    OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+            appId: "e2411621-eb73-480b-96f6-a79bfbea0a69"
+        });
+
+        console.log("✅ OneSignal berjaya dimulakan");
+    });
 </script>
 
 </body>

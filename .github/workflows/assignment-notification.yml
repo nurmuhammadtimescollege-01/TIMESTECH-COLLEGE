@@ -65,7 +65,7 @@ jobs:
                 },
                 body: JSON.stringify({
                   app_id: "e2411621-eb73-480b-96f6-a79bfbea0a69",
-                  included_segments: ["Subscribed Users"],
+                  include_subscription_ids: ["643a4ede-79da-4eba-a7de-b193a90ebd7a"],
                   headings: {
                     en: title
                   },

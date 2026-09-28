@@ -1085,6 +1085,8 @@ if (studentId) {
          }
         });
 
+        await OneSignal.Notifications.requestPermission();
+
         console.log("✅ OneSignal berjaya dimulakan");
     });
 </script>

@@ -94,7 +94,7 @@ jobs:
             console.log("Malaysia date:", today);
 
             const snapshot = await db
-              .collection("Assignments")
+              .collection("Assignment")
               .where("active", "==", true)
               .get();
 

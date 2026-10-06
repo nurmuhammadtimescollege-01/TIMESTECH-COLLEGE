@@ -37,18 +37,8 @@ jobs:
           });
 
           const db = admin.firestore();
-          const studentsSnapshot = await db
-  .collection("Students")
-  .get();
 
-const subscriptionIds = studentsSnapshot.docs
-  .map(doc => doc.data().oneSignalSubscriptionId)
-  .filter(Boolean);
-
-console.log(
-  "OneSignal subscriptions found:",
-  subscriptionIds.length
-);
+let subscriptionIds = [];
 
           function malaysiaToday() {
             return new Intl.DateTimeFormat("en-CA", {
@@ -101,9 +91,22 @@ console.log(
           }
 
           async function main() {
-            const today = malaysiaToday();
+    const today = malaysiaToday();
 
-            console.log("Malaysia date:", today);
+    const studentsSnapshot = await db
+        .collection("Students")
+        .get();
+
+    subscriptionIds = studentsSnapshot.docs
+        .map(doc => doc.data().oneSignalSubscriptionId)
+        .filter(Boolean);
+
+    console.log(
+        "OneSignal subscriptions found:",
+        subscriptionIds.length
+    );
+
+    console.log("Malaysia date:", today);
 
             const snapshot = await db
               .collection("Assignment")

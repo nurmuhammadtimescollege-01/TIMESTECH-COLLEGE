@@ -1092,6 +1092,33 @@ if (studentId) {
      "OneSignal subscription:",
      OneSignal.User.PushSubscription.optedIn
      );
+     const params = new URLSearchParams(window.location.search);
+const studentId = params.get("student");
+
+const oneSignalSubscriptionId =
+    OneSignal.User.PushSubscription.id;
+
+console.log(
+    "OneSignal Subscription ID:",
+    oneSignalSubscriptionId
+);
+
+if (studentId && oneSignalSubscriptionId) {
+    await setDoc(
+        doc(db, "Students", studentId),
+        {
+            studentId: studentId,
+            oneSignalSubscriptionId:
+                oneSignalSubscriptionId
+        },
+        { merge: true }
+    );
+
+    console.log(
+        "✅ OneSignal ID disimpan untuk student:",
+        studentId
+    );
+}
 
         console.log("✅ OneSignal berjaya dimulakan");
     });

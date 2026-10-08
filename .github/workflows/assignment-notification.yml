@@ -39,7 +39,7 @@ jobs:
 
           const db = admin.firestore();
 
-let subscriptionIds = [];
+          let subscriptionIds = [];
 
           function malaysiaToday() {
             return new Intl.DateTimeFormat("en-CA", {
@@ -91,23 +91,23 @@ let subscriptionIds = [];
             return result;
           }
 
-          async function main() {
-    const today = malaysiaToday();
+                    async function main() {
+            const today = malaysiaToday();
 
-    const studentsSnapshot = await db
-        .collection("Students")
-        .get();
+            const studentsSnapshot = await db
+              .collection("Students")
+              .get();
 
-    subscriptionIds = studentsSnapshot.docs
-        .map(doc => doc.data().oneSignalSubscriptionId)
-        .filter(Boolean);
+            subscriptionIds = studentsSnapshot.docs
+              .map(doc => doc.data().oneSignalSubscriptionId)
+              .filter(Boolean);
 
-    console.log(
-        "OneSignal subscriptions found:",
-        subscriptionIds.length
-    );
+            console.log(
+              "OneSignal subscriptions found:",
+              subscriptionIds.length
+            );
 
-    console.log("Malaysia date:", today);
+            console.log("Malaysia date:", today);
 
             const snapshot = await db
               .collection("Assignment")

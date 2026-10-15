@@ -1,0 +1,63 @@
+
+name: Test Student Notification
+
+on:
+  workflow_dispatch:
+
+jobs:
+  send-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Send notification to student 0006
+        env:
+          ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
+        run: |
+          node <<'NODE'
+          async function main() {
+            const subscriptionId =
+              "7c278911-e370-4a07-a208-397f9d7df6f9";
+
+            const response = await fetch(
+              "https://api.onesignal.com/notifications",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization":
+                    `Key ${process.env.ONESIGNAL_API_KEY}`
+                },
+                body: JSON.stringify({
+                  app_id: "e2411621-eb73-480b-96f6-a79bfbea0a69",
+                  include_subscription_ids: [subscriptionId],
+                  headings: {
+                    en: "TimesTech College"
+                  },
+                  contents: {
+                    en: "Selamat datang ke TimesTech College! Ini notifikasi ujian untuk pelajar 0006."
+                  },
+                  web_url:
+                    "https://nurmuhammadtimescollege-01.github.io/TIMESTECH-COLLEGE/student.html?student=0006"
+                })
+              }
+            );
+
+            const result = await response.json();
+
+            console.log("OneSignal response:", result);
+
+            if (!response.ok) {
+              throw new Error(JSON.stringify(result));
+            }
+          }
+
+          main().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE

@@ -227,6 +227,36 @@
 
         }
     </style>
+    
+<script type="module">
+    import { initializeApp } from
+        "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+    import {
+        getAuth,
+        signInWithEmailAndPassword
+    } from
+        "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDbmmHXlulqgUxqzbn7iGeywHMdEraDO2Y",
+        authDomain: "student-area-2dd83.firebaseapp.com",
+        projectId: "student-area-2dd83",
+        storageBucket: "student-area-2dd83.firebasestorage.app",
+        messagingSenderId: "601486438219",
+        appId: "1:601486438219:web:ac9e234cc153b9cd59c2ce"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.studentFirebaseLogin = async function(studentId, password) {
+        const email = `student${studentId}@timesttechcollege.com`;
+
+        return signInWithEmailAndPassword(auth, email, password);
+    };
+</script>
+
 </head>
 
 <body>
@@ -257,6 +287,19 @@
                 placeholder="2026-0001-DPRK"
                 autocomplete="off"
             >
+            
+<label class="input-label" for="studentPassword">
+    Password
+</label>
+
+<input
+    type="password"
+    id="studentPassword"
+    class="code-input"
+    placeholder="Enter your password"
+    autocomplete="current-password"
+>
+
 
             <button
                 class="login-button"
@@ -287,65 +330,50 @@
 
     <script>
 
-        function checkStudentCode() {
+        
+async function checkStudentCode() {
+    const studentId = document
+        .getElementById("studentCode")
+        .value
+        .trim();
 
-            const code =
-                document.getElementById("studentCode")
-                .value
-                .trim()
-                .toUpperCase();
+    const password = document
+        .getElementById("studentPassword")
+        .value;
 
-            const message =
-                document.getElementById("message");
+    const message = document.getElementById("message");
 
-            /*
-             * STUDENT ACCESS CODES
-             * 2026-0001-DPRK
-             * until
-             * 2026-0025-DPRK
-             */
+    if (!/^\d{4}$/.test(studentId)) {
+        message.style.color = "#dc2626";
+        message.textContent = "Masukkan ID pelajar 4 digit.";
+        return;
+    }
 
-            const studentCodes = [];
+    if (!password) {
+        message.style.color = "#dc2626";
+        message.textContent = "Masukkan password.";
+        return;
+    }
 
-            for (let i = 1; i <= 25; i++) {
+    message.style.color = "#2563eb";
+    message.textContent = "Sedang log masuk...";
 
-                const number =
-                    String(i).padStart(4, "0");
+    try {
+        await window.studentFirebaseLogin(studentId, password);
 
-                studentCodes.push(
-                    `2026-${number}-DPRK`
-                );
+        message.style.color = "#15803d";
+        message.textContent = "Login berjaya!";
 
-            }
-
-            if (studentCodes.includes(code)) {
-
-                const studentNumber =
-                    code.substring(5, 9);
-
-                message.style.color = "#15803d";
-
-                message.innerHTML =
-                    "✓ Access Granted";
-
-                setTimeout(function () {
-
-                    window.location.href =
-                        "student.html?student=" +
-                        studentNumber;
-
-                }, 700);
-
-            } else {
-
-                message.style.color = "#dc2626";
-
-                message.innerHTML =
-                    "✕ Invalid Student Code";
-
-            }
-
-        }
+        window.location.href =
+            "student.html?student=" +
+            encodeURIComponent(studentId);
+    } catch (error) {
+        console.error(error);
+        message.style.color = "#dc2626";
+        message.textContent =
+            "ID atau password salah. Cuba lagi.";
+    }
+}
 
 
         document

@@ -98,10 +98,12 @@ jobs:
               .collection("Students")
               .get();
 
-            subscriptionIds = studentsSnapshot.docs
-              .map(doc => doc.data().oneSignalSubscriptionId)
-              .filter(Boolean);
+            const targetStudentIds = ["0001", "0004", "0007"];
 
+           const subscriptionIds = studentsSnapshot.docs
+                .filter(doc => targetStudentIds.includes(doc.id))
+                .map(doc => doc.data().oneSignalSubscriptionId)
+                .filter(id => typeof id === "string" && id.length > 0);
             console.log(
               "OneSignal subscriptions found:",
               subscriptionIds.length
